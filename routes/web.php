@@ -24,9 +24,9 @@ Route::view('dashboard', 'dashboard')
 //     ->name('profile');
 Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/', [AdminController::class, 'dashboard'])->name('dashboard');
-    Route::get('/posts', PostsManagement::class)->name('posts');
-    Route::get('/comments', CommentsManagement::class)->name('comments');
-    Route::get('/users', UsersManagement::class)->name('users');
+    Route::get('/posts', [AdminController::class,'posts'])->name('posts');
+    Route::get('/comments', [AdminController::class,'comments'])->name('comments');
+    Route::get('/users', [AdminController::class,'users'])->name('users');
 });
 
 require __DIR__.'/auth.php';
