@@ -29,7 +29,7 @@
 
         <div class="space-y-2">
             <label class="block text-sm font-medium text-gray-700">Featured Image</label>
-            <div class="flex items-center space-x-4">
+            <div class="flex flex-col space-y-3">
                 <label class="flex flex-col items-center justify-center w-full px-4 py-6 border-2 border-dashed border-gray-300 rounded-xl cursor-pointer hover:border-indigo-400 hover:bg-indigo-50 transition-colors">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-gray-400 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
@@ -37,13 +37,23 @@
                     <span class="text-sm text-gray-600">Click to upload an image</span>
                     <input type="file" wire:model="featured_image" accept="image/*" class="hidden" />
                 </label>
+                <!-- Preview when selecting image -->
+                <div class="w-full" x-data="{}">
+                    <div wire:loading wire:target="featured_image" class="text-sm text-gray-500">Uploading image...</div>
+                    @if ($featured_image)
+                        <img src="{{ $featured_image->temporaryUrl() }}" alt="Preview" class="w-full h-48 object-cover rounded-xl border" />
+                    @endif
+                </div>
             </div>
             @error('featured_image') <span class="text-red-600 text-sm block mt-1">{{ $message }}</span> @enderror
         </div>
 
         <button type="submit"
-                class="w-full bg-indigo-600 text-white px-6 py-3 rounded-xl hover:bg-indigo-700 transition-colors font-medium shadow-sm">
-            Publish Post
+                class="w-full bg-indigo-600 text-white px-6 py-3 rounded-xl hover:bg-indigo-700 transition-colors font-medium shadow-sm"
+                wire:loading.attr="disabled"
+                wire:target="createPost,featured_image">
+            <span wire:loading.remove wire:target="createPost">Publish Post</span>
+            <span wire:loading wire:target="createPost">Publishing...</span>
         </button>
     </form>
 
@@ -52,14 +62,23 @@
         <h2 class="text-2xl font-bold text-gray-800 mb-2">Your Posts</h2>
 
         @foreach ($posts as $post)
-            <div class="bg-white p-6 roundedx`-2xl shadow-md border border-gray-100 hover:shadow-lg transition-shadow">
+            <div class="bg-white p-6 rounded-2xl shadow-md border border-gray-100 hover:shadow-lg transition-shadow">
                 @if($post->featured_image)
-                    <img src="{{ Storage::url($post->featured_image) }}"
-                         alt="{{ $post->title }}"
-                         class="w-full h-56 object-cover rounded-xl mb-4 border border-gray-200">
-                                </a>
+                    @if($post->status === 'published')
+                        <a href="{{ route('posts.show', $post->slug) }}" class="block">
+                            <img src="{{ Storage::url($post->featured_image) }}" alt="{{ $post->title }}" class="w-full h-56 object-cover rounded-xl mb-4 border border-gray-200">
+                        </a>
+                    @else
+                        <img src="{{ Storage::url($post->featured_image) }}" alt="{{ $post->title }}" class="w-full h-56 object-cover rounded-xl mb-4 border border-gray-200">
+                    @endif
                 @endif
-                <h3 class="text-xl font-bold text-gray-800">{{ $post->title }}</h3>
+                <h3 class="text-xl font-bold text-gray-800">
+                    @if($post->status === 'published')
+                        <a href="{{ route('posts.show', $post->slug) }}" class="hover:text-indigo-600 transition-colors">{{ $post->title }}</a>
+                    @else
+                        {{ $post->title }}
+                    @endif
+                </h3>
                 <p class="text-gray-600 mt-2">{{ $post->content }}</p>
                 <div class="mt-4 flex items-center">
                     <div class="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center mr-2">
@@ -68,37 +87,23 @@
                         </svg>
                     </div>
                     <p class="text-sm text-gray-500">Posted by {{ $post->user->name }}</p>
+                </div>
 
-                    <div class="flex items-center justify-between">
-                    <a
-                        href="{{ route('posts.show', $post->slug) }}"
-                        class="inline-flex items-center text-teal-600 hover:text-teal-700 text-sm font-medium"
-                    >
-                        Read more
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-                        </svg>
-                    </a>
-                    <livewire:posts.like-post :post="$post" />
-                </div>
-                </div>
+                @if($post->status === 'published')
+                    <div class="mt-4">
+                        <a href="{{ route('posts.show', $post->slug) }}" class="inline-flex items-center text-indigo-600 hover:text-indigo-700 text-sm font-medium">
+                            Read more
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                            </svg>
+                        </a>
+                    </div>
+                @endif
 
                 @if (auth()->id() === $post->user_id)
                     <div class="mt-4 flex gap-3">
-                        <button wire:click="edit({{ $post->id }})"
-                                class="flex items-center gap-1 bg-amber-100 text-amber-800 px-4 py-2 rounded-xl hover:bg-amber-200 transition-colors">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                            </svg>
-                            Edit
-                        </button>
-                        <button wire:click="confirmDelete({{ $post->id }})"
-                                class="flex items-center gap-1 bg-red-100 text-red-800 px-4 py-2 rounded-xl hover:bg-red-200 transition-colors">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                            </svg>
-                            Delete
-                        </button>
+                        <button wire:click="edit({{ $post->id }})" class="flex items-center gap-1 bg-amber-100 text-amber-800 px-4 py-2 rounded-xl hover:bg-amber-200 transition-colors">Edit</button>
+                        <button wire:click="confirmDelete({{ $post->id }})" class="flex items-center gap-1 bg-red-100 text-red-800 px-4 py-2 rounded-xl hover:bg-red-200 transition-colors">Delete</button>
                     </div>
                 @endif
             </div>

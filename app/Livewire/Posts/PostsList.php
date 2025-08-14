@@ -47,17 +47,19 @@ class PostsList extends Component
             'title' => $this->title,
             'content' => $this->content,
             'user_id' => Auth::id(),
+            'status' => 'published',
+            'published_at' => now(),
         ];
 
         if ($this->featured_image) {
             $data['featured_image'] = $this->featured_image->store('posts', 'public');
         }
 
-        Post::create($data);
+        $post = Post::create($data);
 
         $this->reset(['title', 'content', 'featured_image']);
-        $this->loadPosts();
-        session()->flash('message', 'Post created successfully!');
+        // Redirect to the public show route so it doesn't 404
+        return redirect()->route('posts.show', $post->slug);
     }
 
     /** Open edit modal */

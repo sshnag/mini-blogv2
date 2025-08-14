@@ -22,7 +22,7 @@ new class extends Component
             <div class="flex">
                 <!-- Logo -->
                 <div class="shrink-0 flex items-center">
-                    <a href="{{ route('dashboard') }}" wire:navigate class="flex items-center space-x-2">
+                    <a href="{{ route('posts.index') }}" wire:navigate class="flex items-center space-x-2">
                         <div class="w-8 h-8  rounded-lg flex items-center justify-center">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 text-gradient-to-br from-indigo-500 to-purple-600 group-hover:rotate-12 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
@@ -34,9 +34,7 @@ new class extends Component
 
                 <!-- Navigation Links -->
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                    <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')" wire:navigate>
-                        {{ __('Dashboard') }}
-                    </x-nav-link>
+
                     <x-nav-link :href="route('posts.index')" :active="request()->routeIs('posts.*')" wire:navigate>
                         {{ __('Posts') }}
                     </x-nav-link>
@@ -78,12 +76,13 @@ new class extends Component
                             {{ __('Profile') }}
                         </x-dropdown-link>
 
-                        <!-- Authentication -->
-                        <button wire:click="logout" class="w-full text-start" type="button">
-                            <x-dropdown-link>
+                        <!-- Authentication via POST form -->
+                        <form method="POST" action="{{ route('logout') }}">
+                            @csrf
+                            <button type="submit" class="block w-full px-4 py-2 text-start text-sm leading-5 text-gray-700 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 transition duration-150 ease-in-out">
                                 {{ __('Log Out') }}
-                            </x-dropdown-link>
-                        </button>
+                            </button>
+                        </form>
                     </x-slot>
                 </x-dropdown>
             </div>
@@ -105,9 +104,7 @@ new class extends Component
     @auth
     <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden">
         <div class="pt-2 pb-3 space-y-1">
-            <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')" wire:navigate>
-                {{ __('Dashboard') }}
-            </x-responsive-nav-link>
+
             <x-responsive-nav-link :href="route('posts.index')" :active="request()->routeIs('posts.*')" wire:navigate>
                 {{ __('Posts') }}
             </x-responsive-nav-link>
@@ -129,11 +126,12 @@ new class extends Component
                     {{ __('Profile') }}
                 </x-responsive-nav-link>
 
-                <button wire:click="logout" class="w-full text-start">
-                    <x-responsive-nav-link>
+                <form method="POST" action="{{ route('logout') }}">
+                    @csrf
+                    <button type="submit" class="block w-full px-4 py-2 text-start text-sm leading-5 text-gray-700 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 transition duration-150 ease-in-out">
                         {{ __('Log Out') }}
-                    </x-responsive-nav-link>
-                </button>
+                    </button>
+                </form>
             </div>
         </div>
     </div>

@@ -7,10 +7,16 @@ use App\Livewire\Admin\CommentsManagement;
 use App\Livewire\Admin\PostsManagement;
 use App\Livewire\Admin\UsersManagement;
 use App\Livewire\Posts\PostShow;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 // Route::pattern('slug', '[a-zA-Z0-9\-_]+');
-
+Route::post('/logout', function () {
+    Auth::logout();
+    request()->session()->invalidate();
+    request()->session()->regenerateToken();
+    return redirect('/');
+})->name('logout');
 Route::middleware(['auth'])->group(function () {
     Route::get('/posts', [PostController::class, 'index'])->name('posts.index');
     Route::get('/posts/list', [PostController::class, 'postslist'])->name('posts.list');
@@ -19,9 +25,7 @@ Route::middleware(['auth'])->group(function () {
 });
 Route::view('/', 'welcome');
 
-Route::view('dashboard', 'dashboard')
-    ->middleware(['auth', 'verified'])
-    ->name('dashboard');
+
 
 // Route::view('profile', 'profile')
 //     ->middleware(['auth'])
