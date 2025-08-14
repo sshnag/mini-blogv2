@@ -16,9 +16,12 @@ class PostsList extends Component
     public $title;
     public $content;
     public $featured_image;
+    public $existingFeaturedImage;
 
     public $showEditModal = false;
     public $showDeleteModal = false;
+
+    protected $listeners = ['postCreated' => 'loadPosts'];
 
     protected $rules = [
         'title' => 'required|string|max:255',
@@ -43,6 +46,8 @@ class PostsList extends Component
         $this->postId = $post->id;
         $this->title = $post->title;
         $this->content = $post->content;
+            $this->existingFeaturedImage = $post->featured_image; // <-- add this
+
         $this->featured_image = null;
         $this->showEditModal = true;
     }

@@ -5,6 +5,10 @@
             {{ session('message') }}
         </div>
     @endif
+      {{-- Create Post Form --}}
+    <div class="mb-8">
+        <livewire:posts.create-post />
+    </div>
 
     {{-- Posts Feed --}}
     <div class="space-y-8">
@@ -26,9 +30,10 @@
                     <div class="flex items-center text-sm text-gray-500">
                         <span>{{ $post->user->name }}</span>
                         <span class="mx-2">•</span>
-                        <time datetime="{{ $post->published_at->toDateString() }}">
-                            {{ $post->published_at->format('M j, Y') }}
-                        </time>
+                       <time datetime="{{ $post->published_at?->toDateString() ?? now()->toDateString() }}">
+    {{ $post->published_at?->format('M j, Y') ?? now()->format('M j, Y') }}
+</time>
+
                     </div>
                     @can('update', $post)
                         <div class="flex space-x-2">
