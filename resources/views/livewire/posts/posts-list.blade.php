@@ -59,7 +59,7 @@
 
     <!-- Posts List -->
     <div class="space-y-6">
-        <h2 class="text-2xl font-bold text-gray-800 mb-2">Your Posts</h2>
+        <h2 class="text-2xl font-bold text-gray-800 mb-2"> Posts</h2>
 
         @foreach ($posts as $post)
             <div class="bg-white p-6 rounded-2xl shadow-md border border-gray-100 hover:shadow-lg transition-shadow">
@@ -80,7 +80,8 @@
                     @endif
                 </h3>
                 <p class="text-gray-600 mt-2">{{ $post->content }}</p>
-                <div class="mt-4 flex items-center">
+                 <div class="flex items-center justify-between pt-2 border-t border-gray-100">
+                            <div class="flex items-center gap-2">
                     <div class="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center mr-2">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-indigo-600" viewBox="0 0 20 20" fill="currentColor">
                             <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" />
@@ -88,7 +89,21 @@
                     </div>
                     <p class="text-sm text-gray-500">Posted by {{ $post->user->name }}</p>
                 </div>
-
+  <div class="flex items-center gap-4 text-xs text-gray-500">
+                                <span class="inline-flex items-center gap-1">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 6 4 4 6.5 4c1.54 0 3.04.99 3.57 2.36h.87C11.46 4.99 12.96 4 14.5 4 17 4 19 6 19 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+                                    </svg>
+                                    <span>{{ $post->likes_count }}</span>
+                                </span>
+                                <span class="inline-flex items-center gap-1">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                                    </svg>
+                                    <span>{{ $post->approved_comments_count }}</span>
+                                </span>
+                            </div>
+                 </div>
                 @if($post->status === 'published')
                     <div class="mt-4">
                         <a href="{{ route('posts.show', $post->slug) }}" class="inline-flex items-center text-indigo-600 hover:text-indigo-700 text-sm font-medium">
@@ -102,8 +117,12 @@
 
                 @if (auth()->id() === $post->user_id)
                     <div class="mt-4 flex gap-3">
-                        <button wire:click="edit({{ $post->id }})" class="flex items-center gap-1 bg-amber-100 text-amber-800 px-4 py-2 rounded-xl hover:bg-amber-200 transition-colors">Edit</button>
-                        <button wire:click="confirmDelete({{ $post->id }})" class="flex items-center gap-1 bg-red-100 text-red-800 px-4 py-2 rounded-xl hover:bg-red-200 transition-colors">Delete</button>
+                        <button wire:click="edit({{ $post->id }})" class="flex items-center gap-1 bg-amber-100 text-amber-800 px-4 py-2 rounded-xl hover:bg-amber-200 transition-colors"> <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" viewBox="0 0 20 20" fill="currentColor">
+                                        <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
+                                    </svg>Edit</button>
+                        <button wire:click="confirmDelete({{ $post->id }})" class="flex items-center gap-1 bg-red-100 text-red-800 px-3 py-1.5 rounded-lg hover:bg-red-200 transition-colors text-xs"> <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
+                                    </svg>Delete</button>
                     </div>
                 @endif
             </div>

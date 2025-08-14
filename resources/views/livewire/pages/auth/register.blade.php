@@ -32,7 +32,7 @@ new #[Layout('layouts.guest')] class extends Component
 
 		Auth::login($user);
 
-		$this->redirect(route('dashboard', absolute: false), navigate: true);
+		$this->redirect(route('posts.index', absolute: false), navigate: true);
 	}
 }; ?>
 
@@ -43,28 +43,28 @@ new #[Layout('layouts.guest')] class extends Component
 			<!-- Name -->
 			<div>
 				<x-input-label for="name" :value="__('Name')" />
-				<x-text-input wire:model="name" id="name" class="block mt-1 w-full" type="text" name="name"  autofocus autocomplete="name" />
+				<x-text-input wire:model="name" id="name" class="block mt-1 w-full" type="text" name="name" required autofocus autocomplete="name" />
 				<x-input-error :messages="$errors->get('name')" class="mt-2" />
 			</div>
 
 			<!-- Email Address -->
 			<div>
 				<x-input-label for="email" :value="__('Email')" />
-				<x-text-input wire:model="email" id="email" class="block mt-1 w-full" type="email" name="email"  autocomplete="username" />
+				<x-text-input wire:model="email" id="email" class="block mt-1 w-full" type="email" name="email" required autocomplete="username" />
 				<x-input-error :messages="$errors->get('email')" class="mt-2" />
 			</div>
 
 			<!-- Password -->
 			<div>
 				<x-input-label for="password" :value="__('Password')" />
-				<x-text-input wire:model="password" id="password" class="block mt-1 w-full" type="password" name="password"  autocomplete="new-password" />
+				<x-text-input wire:model="password" id="password" class="block mt-1 w-full" type="password" name="password" required autocomplete="new-password" />
 				<x-input-error :messages="$errors->get('password')" class="mt-2" />
 			</div>
 
 			<!-- Confirm Password -->
 			<div>
 				<x-input-label for="password_confirmation" :value="__('Confirm Password')" />
-				<x-text-input wire:model="password_confirmation" id="password_confirmation" class="block mt-1 w-full" type="password" name="password_confirmation"  autocomplete="new-password" />
+				<x-text-input wire:model="password_confirmation" id="password_confirmation" class="block mt-1 w-full" type="password" name="password_confirmation" required autocomplete="new-password" />
 				<x-input-error :messages="$errors->get('password_confirmation')" class="mt-2" />
 			</div>
 
@@ -78,5 +78,12 @@ new #[Layout('layouts.guest')] class extends Component
 				</x-primary-button>
 			</div>
 		</form>
+
+		<div class="mt-6 text-center text-sm text-gray-600">
+			{{ __('Already have an account?') }}
+			<a href="{{ route('login') }}" class="font-medium text-indigo-600 hover:text-indigo-700" wire:navigate>
+				{{ __('Log in') }}
+			</a>
+		</div>
 	</div>
 </div>

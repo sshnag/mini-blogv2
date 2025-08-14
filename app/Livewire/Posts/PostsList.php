@@ -36,7 +36,10 @@ class PostsList extends Component
 
     public function loadPosts()
     {
-        $this->posts = Post::latest()->with('user')->get();
+        $this->posts = Post::latest()
+            ->with('user')
+            ->withCount(['likes', 'approvedComments'])
+            ->get();
     }
 
     public function createPost()
@@ -70,7 +73,6 @@ class PostsList extends Component
         $this->title = $post->title;
         $this->content = $post->content;
             $this->existingFeaturedImage = $post->featured_image; // <-- add this
-
         $this->featured_image = null;
         $this->showEditModal = true;
     }

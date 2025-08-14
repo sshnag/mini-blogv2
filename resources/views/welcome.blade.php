@@ -4,7 +4,7 @@
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 
-		<title>{{ config('app.name', 'Mini Blog') }}</title>
+		<title>{{ config( 'Mini Blog') }}</title>
 
 		<!-- Fonts -->
 		<link rel="preconnect" href="https://fonts.bunny.net">
@@ -70,7 +70,7 @@
 			</main>
 
 			<footer class="py-10 text-center text-sm text-gray-500">
-				{{ config('app.name', 'Mini Blog') }} · Laravel v{{ Illuminate\Foundation\Application::VERSION }} (PHP v{{ PHP_VERSION }})
+				{{ config('app.name', 'Mini Blog') }} · Laravel {{ Illuminate\Foundation\Application::VERSION }} (PHP v{{ PHP_VERSION }})
 			</footer>
 		</div>
 	</body>
