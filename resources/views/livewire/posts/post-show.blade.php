@@ -1,6 +1,8 @@
+@extends('layouts.app')
+
+@section('content')
 <div class="max-w-4xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
     <article class="bg-white rounded-xl border border-gray-100 overflow-hidden shadow-sm">
-        {{-- Featured Image --}}
         @if($post->featured_image)
             <div class="w-full aspect-video overflow-hidden">
                 <img
@@ -13,10 +15,9 @@
         @endif
 
         <div class="p-6 sm:p-8">
-            {{-- Post Header --}}
             <header class="mb-8">
                 <div class="flex items-center text-sm text-gray-500 mb-3">
-                    <span>{{ optional($post->created_at)->format('F j, Y') }}</span>
+                    <span>{{ $post->created_at->format('F j, Y') }}</span>
                 </div>
 
                 <h1 class="text-3xl sm:text-4xl font-bold text-gray-900 leading-tight mb-4">
@@ -24,32 +25,30 @@
                 </h1>
 
                 <div class="flex items-center">
-                    @if($post->user->avatar)
-                        <img src="{{ Storage::url($post->user->avatar) }}" alt="{{ $post->user->name }}" class="h-10 w-10 rounded-full object-cover mr-3">
-                    @else
-                        <div class="flex-shrink-0 h-10 w-10 bg-gray-100 rounded-full flex items-center justify-center text-gray-500 font-medium mr-3">
-                            {{ strtoupper(substr($post->user->name, 0, 1)) }}
-                        </div>
-                    @endif
+                   @if($post->user->avatar)
+    <img src="{{ Storage::url($post->user->avatar) }}" alt="{{ $post->user->name }}" class="h-10 w-10 rounded-full object-cover mr-3">
+@else
+    <div class="flex-shrink-0 h-10 w-10 bg-gray-100 rounded-full flex items-center justify-center text-gray-500 font-medium mr-3">
+        {{ strtoupper(substr($post->user->name, 0, 1)) }}
+    </div>
+@endif
 
                     <span class="text-gray-700">{{ $post->user->name }}</span>
                 </div>
             </header>
 
-            {{-- Post Content --}}
             <div class="prose prose-lg max-w-none text-gray-700 mb-10">
                 {!! nl2br(e($post->content)) !!}
             </div>
 
-            {{-- Likes --}}
             <livewire:posts.like-post :post="$post" />
 
-            {{-- Comments --}}
             <section class="border-t border-gray-100 pt-8 mt-10">
                 <div class="flex items-center justify-between mb-6">
                     <h2 class="text-xl font-semibold text-gray-800">
-                        Comments ({{ optional($post->comments)->count() ?? 0 }})
-                    </h2>
+    Comments ({{ $post->comments->count() }})
+</h2>
+
                 </div>
 
                 <div class="space-y-6 mb-8">
@@ -63,3 +62,4 @@
         </div>
     </article>
 </div>
+@endsection

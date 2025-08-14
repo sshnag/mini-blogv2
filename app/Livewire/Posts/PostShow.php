@@ -10,44 +10,28 @@ use Livewire\Attributes\Layout;
  {
 
     public Post $post;
-    public function mount($slug)  {
-        $this->post=Post::published()->where('slug',$slug)
-        ->with(['user','likes','approvedComments.user'])->firstOrFail();
+
+    public function mount($slug)
+    {
+        $post = Post::published()
+            ->where('slug', $slug)
+            ->with(['user', 'likes', 'approvedComments.user', 'comments'])
+            ->firstOrFail();
+
+        $this->post = $post;
     }
 
+    protected $listeners = ['commentAdded' => 'refreshPost'];
+
+    public function refreshPost()
+    {
+        $this->post = Post::published()
+            ->where('slug', $this->post->slug)
+            ->with(['-user', 'likes', 'approvedComments.user'])
+            ->firstOrFail();
+    }
 
     public function render(){
         return view('livewire.posts.post-show');
     }
-
-
-    protected $listeners = ['commentAdded' => 'refreshPost'];
-
-public function refreshPost()
-{
-    $this->post = Post::published()
-        ->where('slug', $this->post->slug)
-        ->with(['user', 'likes', 'approvedComments.user'])
-        ->firstOrFail();
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
  }

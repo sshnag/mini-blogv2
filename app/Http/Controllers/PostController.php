@@ -30,10 +30,22 @@ class PostController extends Controller
      */
 
 public function show($slug)
-{
-   $post = Post::published()->where('slug', $slug)->with(['user','likes','approvedComments.user'])->firstOrFail();
-return view('posts.show', compact('post'));
-}
+    {
+        $post = Post::published()
+            ->where('slug', $slug)
+            ->with([
+                'user',
+                'likes',
+                'approvedComments.user',
+                'comments'
+            ])
+            ->firstOrFail();
+
+        // Increment view count if needed (optional)
+        // $post->increment('views');
+
+        return view('posts.show', compact('post'));
+    }
 
 
     /**

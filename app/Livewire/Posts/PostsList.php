@@ -39,6 +39,27 @@ class PostsList extends Component
         $this->posts = Post::latest()->with('user')->get();
     }
 
+    public function createPost()
+    {
+        $this->validate();
+
+        $data = [
+            'title' => $this->title,
+            'content' => $this->content,
+            'user_id' => Auth::id(),
+        ];
+
+        if ($this->featured_image) {
+            $data['featured_image'] = $this->featured_image->store('posts', 'public');
+        }
+
+        Post::create($data);
+
+        $this->reset(['title', 'content', 'featured_image']);
+        $this->loadPosts();
+        session()->flash('message', 'Post created successfully!');
+    }
+
     /** Open edit modal */
     public function edit($id)
     {

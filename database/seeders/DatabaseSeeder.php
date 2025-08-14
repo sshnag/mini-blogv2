@@ -21,9 +21,9 @@ class DatabaseSeeder extends Seeder
         //     'password'=>'password123'
         // ]);
             $this->call([
-
                 RolePermissionSeeder::class,
-                  AdminUserSeeder::class
+                AdminUserSeeder::class,
+                PostSeeder::class
             ]);
     }
 }
