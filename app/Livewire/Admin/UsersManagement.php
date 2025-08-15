@@ -9,6 +9,7 @@ use Livewire\Attributes\Url;
 use Livewire\Attributes\Layout;
 use Spatie\Permission\Models\Role;
 
+
 #[Layout('layouts.app')]
 class UsersManagement extends Component
 {
@@ -19,6 +20,7 @@ class UsersManagement extends Component
 
     #[Url(history: true)]
     public $sortBy = 'created_at';
+    public $roles = [];
 
     #[Url(history: true)]
     public $sortDir = 'DESC';
@@ -32,13 +34,19 @@ class UsersManagement extends Component
     // Add available roles
     public $availableRoles = ['user', 'author', 'admin'];
 
-    public function mount()
-    {
-        // Verify all users have exactly one role assigned
-        User::doesntHave('roles')->each(function ($user) {
-            $user->assignRole('user'); // Assign default role
-        });
+   public function mount()
+{
+    // Load roles for all users into the $roles array
+    foreach (User::all() as $user) {
+        $this->roles[$user->id] = $user->getRoleNames()->first() ?? 'user';
     }
+
+    // Ensure every user has at least the 'user' role
+    User::doesntHave('roles')->each(function ($user) {
+        $user->assignRole('user');
+    });
+}
+
 
     public function setSortBy($sortByField)
     {
@@ -69,12 +77,39 @@ class UsersManagement extends Component
             return;
         }
 
-        // Remove all roles and assign the new one
-        $user->syncRoles([$role]);
+        // Remove all existing roles
+        $user->roles()->detach();
+
+        // Assign the new role
+        $user->assignRole($role);
+
+        // Clear the user's permission cache
+        $user->forgetCachedPermissions();
+
+        // Force refresh the user model
+        $user->refresh();
 
         $this->dispatch('notify',
             title: 'Success',
-            message: "Role for {$user->name} updated to {$role}.",
+            message: "Role for {$user->name} updated to {$role}. User should log out and log back in for changes to take effect.",
+            type: 'success'
+        );
+    }
+
+    public function forceRefreshUserRoles($userId)
+    {
+        $user = User::findOrFail($userId);
+
+        // Clear all caches for this user
+        $user->forgetCachedPermissions();
+        $user->refresh();
+
+        // Clear global permission cache
+        app()['cache']->forget('spatie.permission.cache');
+
+        $this->dispatch('notify',
+            title: 'Cache Cleared',
+            message: "Permission cache cleared for {$user->name}. Role changes should now be visible.",
             type: 'success'
         );
     }

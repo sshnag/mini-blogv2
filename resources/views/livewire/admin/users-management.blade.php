@@ -82,46 +82,29 @@
                                         {{ $user->email }}
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
-                                        <select
-                                            x-data
-                                            x-init="currentRole = '{{ $user->getRoleNames()->first() ?? 'user' }}'"
-                                            x-model="currentRole"
-                                            x-on:change="
-                                                const selectedRole = $event.target.value;
-                                                Swal.fire({
-                                                    title: 'Change User Role?',
-                                                    text: `Change role for {{ $user->name }} to ${selectedRole}?`,
-                                                    icon: 'question',
-                                                    showCancelButton: true,
-                                                    confirmButtonColor: '#3085d6',
-                                                    cancelButtonColor: '#d33',
-                                                    confirmButtonText: 'Yes, change it!',
-                                                    cancelButtonText: 'Cancel',
-                                                }).then((result) => {
-                                                    if (result.isConfirmed) {
-                                                        $wire.updateUserRole({{ $user->id }}, selectedRole)
-                                                            .then(() => {
-                                                                Swal.fire({
-                                                                    title: 'Updated!',
-                                                                    text: 'User role has been updated.',
-                                                                    icon: 'success',
-                                                                    timer: 1500,
-                                                                    showConfirmButton: false
-                                                                });
-                                                            });
-                                                    } else {
-                                                        $event.target.value = currentRole;
-                                                    }
-                                                });
-                                            "
-                                            class="block w-full pl-3 pr-8 py-1 text-base border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md"
-                                        >
-                                            @foreach(['user', 'author', 'admin'] as $role)
-                                                <option value="{{ $role }}" {{ $user->hasRole($role) ? 'selected' : '' }}>
-                                                    {{ ucfirst($role) }}
-                                                </option>
-                                            @endforeach
-                                        </select>
+                                        <div class="flex items-center space-x-2">
+                                            <select
+    wire:model="roles.{{ $user->id }}"
+    wire:change="updateUserRole({{ $user->id }}, $event.target.value)"
+    class="block w-full pl-3 pr-8 py-1 text-base border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md"
+>
+    @foreach($availableRoles as $role)
+        <option value="{{ $role }}">{{ ucfirst($role) }}</option>
+    @endforeach
+</select>
+
+
+                                            <!-- Refresh Button -->
+                                            <button
+                                                wire:click="forceRefreshUserRoles({{ $user->id }})"
+                                                title="Refresh user roles cache"
+                                                class="p-1 text-gray-400 hover:text-blue-600 transition-colors"
+                                            >
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                                                </svg>
+                                            </button>
+                                        </div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                         {{ $user->created_at->format('M j, Y') }}

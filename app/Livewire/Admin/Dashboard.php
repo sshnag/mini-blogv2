@@ -20,7 +20,7 @@ class Dashboard extends Component
             'total_users'=>User::count()
         ];
         $recentPosts=Post::with('user')->latest()->take(5)->get();
-        $pendingComments=Comment::with(['user','post'])->where('is_approved',false)->latest()->take(5)->get();
-        return view('livewire.admin.dashboard', compact('stats', 'recentPosts', 'pendingComments'));
+        
+        return view('livewire.admin.dashboard', compact('stats', 'recentPosts'));
     }
 }

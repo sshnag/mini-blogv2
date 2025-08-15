@@ -13,7 +13,7 @@ class Admin
 {
     public function handle(Request $request, Closure $next)
     {
-        if (!Auth::check() || !Auth::user()->hasRole('admin')) {
+        if (!Auth::check() && !Auth::user()->hasRole('admin')) {
             abort(403,'Unauthorized Access');
         }
         return $next($request);

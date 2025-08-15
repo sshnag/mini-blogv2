@@ -145,46 +145,8 @@
             </a>
         </div>
 
-        @if($pendingComments->count() > 0)
-        <div class="divide-y divide-gray-100">
-            @foreach($pendingComments as $comment)
-            <div class="py-4">
-                <div class="flex items-start space-x-4">
-                    <div class="flex-shrink-0 h-10 w-10 bg-gray-100 rounded-full flex items-center justify-center text-gray-500 font-medium">
-                        {{ strtoupper(substr($comment->user->name, 0, 1)) }}
-                    </div>
-                    <div class="flex-1 min-w-0">
-                        <div class="flex items-center justify-between">
-                            <p class="text-sm font-medium text-gray-800">{{ $comment->user->name }}</p>
-                            <span class="text-xs text-gray-500">{{ $comment->created_at->diffForHumans() }}</span>
-                        </div>
-                        <p class="text-sm text-gray-600 mt-1">{{ Str::limit($comment->content, 120) }}</p>
-                        <div class="mt-2 flex items-center text-xs text-gray-500">
-                            <span>On: </span>
-                            <a href="{{ route('posts.show', $comment->post) }}" class="ml-1 text-blue-600 hover:underline">{{ Str::limit($comment->post->title, 40) }}</a>
-                        </div>
-                        <div class="mt-3 flex space-x-2">
-                            <button wire:click="approveComment({{ $comment->id }})" class="text-xs px-3 py-1 bg-emerald-100 text-emerald-800 rounded-full hover:bg-emerald-200 transition-colors">
-                                Approve
-                            </button>
-                            <button wire:click="deleteComment({{ $comment->id }})" class="text-xs px-3 py-1 bg-red-100 text-red-800 rounded-full hover:bg-red-200 transition-colors">
-                                Delete
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            @endforeach
-        </div>
-        @else
-        <div class="text-center py-8">
-            <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-            </svg>
-            <h4 class="mt-2 text-sm font-medium text-gray-900">No pending comments</h4>
-            <p class="mt-1 text-sm text-gray-500">All comments have been moderated.</p>
-        </div>
-        @endif
+        <!-- Use CommentsManagement component for pending comments -->
+        <livewire:admin.comments-management :limit="5" />
     </div>
 
     <!-- System Status -->

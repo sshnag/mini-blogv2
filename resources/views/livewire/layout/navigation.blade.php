@@ -22,7 +22,7 @@ new class extends Component
             <div class="flex">
                 <!-- Logo -->
                 <div class="shrink-0 flex items-center">
-                    <a href="{{ route('posts.index') }}" wire:navigate class="flex items-center space-x-2">
+                    <a href="{{ route('welcome') }}" wire:navigate class="flex items-center space-x-2">
                         <div class="w-8 h-8  rounded-lg flex items-center justify-center">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 text-gradient-to-br from-indigo-500 to-purple-600 group-hover:rotate-12 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
@@ -38,11 +38,13 @@ new class extends Component
                     <x-nav-link :href="route('posts.index')" :active="request()->routeIs('posts.*')" wire:navigate>
                         {{ __('Posts') }}
                     </x-nav-link>
-                    @if(auth()->user()->hasRole('admin'))
-                        <x-nav-link :href="route('admin.dashboard')" :active="request()->routeIs('admin.*')" wire:navigate>
-                            {{ __('Admin') }}
-                        </x-nav-link>
-                    @endif
+                    @auth
+                        @if(auth()->user()->hasRole('admin'))
+                            <x-nav-link :href="route('admin.dashboard')" :active="request()->routeIs('admin.*')" wire:navigate>
+                                {{ __('Admin') }}
+                            </x-nav-link>
+                        @endif
+                    @endauth
                 </div>
             </div>
 
@@ -86,6 +88,16 @@ new class extends Component
                     </x-slot>
                 </x-dropdown>
             </div>
+            @else
+            <!-- Guest Navigation -->
+            <div class="hidden sm:flex sm:items-center sm:ms-6 space-x-4">
+                <a href="{{ route('login') }}" class="text-gray-700 hover:text-indigo-600 px-3 py-2 text-sm font-medium transition-colors">
+                    {{ __('Log in') }}
+                </a>
+                <a href="{{ route('register') }}" class="bg-indigo-600 text-white hover:bg-indigo-700 px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+                    {{ __('Register') }}
+                </a>
+            </div>
             @endauth
 
             <!-- Hamburger -->
@@ -101,20 +113,22 @@ new class extends Component
     </div>
 
     <!-- Responsive Navigation Menu -->
-    @auth
     <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden">
         <div class="pt-2 pb-3 space-y-1">
 
             <x-responsive-nav-link :href="route('posts.index')" :active="request()->routeIs('posts.*')" wire:navigate>
                 {{ __('Posts') }}
             </x-responsive-nav-link>
-            @if(auth()->user()->hasRole('admin'))
-                <x-responsive-nav-link :href="route('admin.dashboard')" :active="request()->routeIs('admin.*')" wire:navigate>
-                    {{ __('Admin') }}
-                </x-responsive-nav-link>
-            @endif
+            @auth
+                @if(auth()->user()->hasRole('admin'))
+                    <x-responsive-nav-link :href="route('admin.dashboard')" :active="request()->routeIs('admin.*')" wire:navigate>
+                        {{ __('Admin') }}
+                    </x-responsive-nav-link>
+                @endif
+            @endauth
         </div>
 
+        @auth
         <div class="pt-4 pb-1 border-t border-gray-200">
             <div class="px-4">
                 <div class="font-medium text-base text-gray-800" x-data="{ name: '{{ auth()->user()->name }}' }" x-text="name" x-on:profile-updated.window="name = $event.detail.name"></div>
@@ -134,7 +148,19 @@ new class extends Component
                 </form>
             </div>
         </div>
+        @else
+        <!-- Guest Mobile Navigation -->
+        <div class="pt-4 pb-1 border-t border-gray-200">
+            <div class="px-4 space-y-2">
+                <a href="{{ route('login') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-lg transition-colors">
+                    {{ __('Log in') }}
+                </a>
+                <a href="{{ route('register') }}" class="block px-4 py-2 text-sm bg-indigo-600 text-white hover:bg-indigo-700 rounded-lg transition-colors">
+                    {{ __('Register') }}
+                </a>
+            </div>
+        </div>
+        @endauth
     </div>
-    @endauth
 </nav>
 

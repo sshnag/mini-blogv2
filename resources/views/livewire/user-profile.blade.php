@@ -92,7 +92,7 @@
             <ul class="space-y-3">
                 @foreach($likedPosts as $post)
                     <li>
-                        <a href="{{ route('posts.show', $post->slug) }}" class="text-indigo-600 hover:underline font-medium">
+        <a href="{{ route('posts.show', $post->slug) }}" class="text-indigo-600 hover:underline font-medium">
                             {{ $post->title }}
                         </a>
                         <span class="text-sm text-gray-500"> • {{ $post->created_at->diffForHumans() }}</span>

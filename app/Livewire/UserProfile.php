@@ -36,8 +36,13 @@ class UserProfile extends Component
 
         $this->comments = $this->user->comments()->with('post')->latest()->get();
 
-        $this->likedPosts = $this->user->likedPosts()->latest()->get();
-
+        $this->likedPosts = $this->user->likedPosts()
+            ->where('status', 'published')
+            ->where('published_at', '<=', now())
+            ->select('posts.id', 'posts.title', 'posts.slug', 'posts.created_at')
+            ->latest()
+            ->get();
+            
         $this->name = $this->user->name;
         $this->email = $this->user->email;
         $this->existingAvatar = $this->user->avatar;
@@ -61,9 +66,14 @@ class UserProfile extends Component
 
         session()->flash('success', 'Profile updated successfully.');
 
-        // Optionally refresh related data:
+        //  refresh related data:
         $this->comments = $user->comments()->with('post')->latest()->get();
-        $this->likedPosts = $user->likedPosts()->latest()->get();
+        $this->likedPosts = $user->likedPosts()
+            ->where('status', 'published')
+            ->where('published_at', '<=', now())
+            ->select('posts.id', 'posts.title', 'posts.slug', 'posts.created_at')
+            ->latest()
+            ->get();
     }
 
     public function render()
