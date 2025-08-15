@@ -9,7 +9,12 @@ use Illuminate\Support\Str;
 
 class PostController extends Controller
 {
-   /
+
+    /**
+     * Summary of index
+     * Post feed view and retriving from like and comment model relationship
+     * @return \Illuminate\Contracts\View\View
+     */
     public function index()
     {
         $posts = Post::published()
@@ -21,6 +26,12 @@ class PostController extends Controller
         return view('posts.index', compact('posts'));
     }
 
+
+    /**
+     * Summary of postslist
+     * All Posts page display
+     * @return \Illuminate\Contracts\View\View
+     */
     public function postslist()
     {
         $posts = Post::published()
@@ -32,8 +43,12 @@ class PostController extends Controller
         return view('posts.list', compact('posts'));
     }
 
+
     /**
-     * Display the specified resource.
+     * Summary of show
+     * Post Details page
+     * @param mixed $slug
+     * @return \Illuminate\Contracts\View\View
      */
     public function show($slug)
     {
@@ -47,20 +62,24 @@ class PostController extends Controller
             ])
             ->firstOrFail();
 
-        // Increment view count if needed (optional)
-        // $post->increment('views');
+
 
         return view('posts.show', compact('post'));
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Summary of create
+     * Post Create page
+     * @return \Illuminate\Contracts\View\View|\Illuminate\Http\RedirectResponse
      */
     public function create()
     {
+        //check if the user is logged in
         if (!Auth::check()) {
             return redirect()->route('login');
         }
+
+        //check if the user has either author or admin role
 
         if (!Auth::user()->hasAnyRole(['author', 'admin'])) {
             abort(403, 'You do not have permission to create posts. Only authors and admins can create posts.');
@@ -70,16 +89,23 @@ class PostController extends Controller
     }
 
     /**
-     * Show the form for editing the specified resource.
+     * Summary of edit
+     * Post Editing form page
+     * @param string $id
+     * @return \Illuminate\Contracts\View\View|\Illuminate\Http\RedirectResponse
      */
     public function edit(string $id)
     {
+        //check if the user is logged in
         if (!Auth::check()) {
             return redirect()->route('login');
         }
 
+
+        //finding postid
         $post = Post::findOrFail($id);
 
+        //check roles if the user has admin role
         if (Auth::id() !== $post->user_id && !Auth::user()->hasRole('admin')) {
             abort(403, 'You can only edit your own posts unless you are an admin.');
         }
@@ -92,7 +118,11 @@ class PostController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
+     * Summary of update
+     * Post Update
+     * @param \Illuminate\Http\Request $request
+     * @param string $id
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function update(Request $request, string $id)
     {
@@ -110,6 +140,8 @@ class PostController extends Controller
             abort(403, 'You do not have permission to update posts. Only authors and admins can update posts.');
         }
 
+
+        //post input validation
         $request->validate([
             'title' => 'required|string|max:255',
             'content' => 'required|string',
@@ -124,7 +156,10 @@ class PostController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Summary of destro
+     * Post deletion
+     * @param string $id
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function destroy(string $id)
     {

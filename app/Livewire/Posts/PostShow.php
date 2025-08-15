@@ -21,10 +21,12 @@ use Livewire\Attributes\Layout;
         $this->post = $post;
     }
 
+    //lsitener for comment added
     protected $listeners = ['commentAdded' => 'refreshPost'];
 
     public function refreshPost()
     {
+
         $this->post = Post::published()
             ->where('slug', $this->post->slug)
             ->with(['-user', 'likes', 'approvedComments.user'])

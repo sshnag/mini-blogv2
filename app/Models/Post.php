@@ -35,28 +35,29 @@ class Post extends Model
     );
     }
 
+    //user model relation
     public function user(){
         return $this->belongsTo(User::class);
     }
 
+    //comment model relation
     public function comments(){
         return $this->hasMany(Comment::class);
     }
 
+    //retirving only approved comments
   public function approvedComments(){
     return $this->hasMany(Comment::class)->where('is_approved', true);
 }
-
-
+    //like model relation
     public function likes(){
         return $this->hasMany(Like::class);
     }
-
+    //like by what user , taking userid
     public function isLikedBy(?User $user) {
     if (!$user) return false;
     return $this->likes()->where('user_id', $user->id)->exists();
 }
-
 
     public function scopePublished($query)  {
         return $query->where('status','published')->where('published_at','<=',now());

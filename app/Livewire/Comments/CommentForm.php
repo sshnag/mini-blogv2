@@ -23,15 +23,15 @@ class CommentForm extends Component
         $this->post = $post;
     }
 
+    //Adding comment
     public function addComment()
     {
         if (!Auth::check()) {
             return redirect()->route('login');
         }
-
+        //comment validation
         $this->validate();
-
-
+        //insert comment
         Comment::create([
             'post_id' => $this->post->id,
             'user_id' => Auth::id(),
@@ -39,8 +39,9 @@ class CommentForm extends Component
         ]);
 
         $this->content = '';
-$this->dispatch('commentAdded');
 
+        //comment add event
+$this->dispatch('commentAdded');
     }
 
 

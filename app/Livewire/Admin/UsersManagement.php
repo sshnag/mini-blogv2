@@ -31,7 +31,7 @@ class UsersManagement extends Component
     #[Url(history: true)]
     public $roleFilter = '';
 
-    // Add available roles
+    // add available roles
     public $availableRoles = ['user', 'author', 'admin'];
 
    public function mount()
@@ -48,6 +48,7 @@ class UsersManagement extends Component
 }
 
 
+    //for sorting
     public function setSortBy($sortByField)
     {
         if ($this->sortBy === $sortByField) {
@@ -67,7 +68,7 @@ class UsersManagement extends Component
     {
         $user = User::findOrFail($userId);
 
-        // Verify the role exists
+        // verify the role exists
         if (!in_array($role, $this->availableRoles)) {
             $this->dispatch('notify',
                 title: 'Error',
@@ -77,16 +78,16 @@ class UsersManagement extends Component
             return;
         }
 
-        // Remove all existing roles
+        // remove all existing roles
         $user->roles()->detach();
 
-        // Assign the new role
+        // assign the new role
         $user->assignRole($role);
 
-        // Clear the user's permission cache
+        // clear the user's permission cache
         $user->forgetCachedPermissions();
 
-        // Force refresh the user model
+        // force refresh the user model
         $user->refresh();
 
         $this->dispatch('notify',
@@ -100,11 +101,11 @@ class UsersManagement extends Component
     {
         $user = User::findOrFail($userId);
 
-        // Clear all caches for this user
+        // clear all caches for this user
         $user->forgetCachedPermissions();
         $user->refresh();
 
-        // Clear global permission cache
+        // clear global permission cache
         app()['cache']->forget('spatie.permission.cache');
 
         $this->dispatch('notify',
@@ -113,7 +114,7 @@ class UsersManagement extends Component
             type: 'success'
         );
     }
-
+    //for user deletion
     public function deleteUser($userId)
     {
         $user = User::findOrFail($userId);
@@ -132,11 +133,13 @@ class UsersManagement extends Component
             'users' => User::with('roles')
                 ->when($this->search, function($query) {
                     $query->where(function($q) {
+                        //user searching with name, email
                         $q->where('name', 'like', '%'.$this->search.'%')
                           ->orWhere('email', 'like', '%'.$this->search.'%');
                     });
                 })
                 ->when($this->roleFilter, function($query) {
+                    //role filtering
                     $query->whereHas('roles', function($q) {
                         $q->where('name', $this->roleFilter);
                     });

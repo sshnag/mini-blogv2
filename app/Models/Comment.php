@@ -21,11 +21,13 @@ class Comment extends Model
         'is_approved'=>'boolean',
     ];
 
+    //post model relation
     public function post()
      {
         return $this->belongsTo(Post::class);
     }
 
+    //user model relation
     public function user(){
         return $this->belongsTo(User::class);
     }

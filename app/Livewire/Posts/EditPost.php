@@ -18,6 +18,7 @@ class EditPost extends Component
     public $featured_image;
     public $existingFeaturedImage;
 
+    //validation
     protected $rules = [
         'title' => 'required|string|max:255',
         'content' => 'required|string|min:10',
@@ -43,7 +44,7 @@ class EditPost extends Component
 
     public function update()
     {
-        // Double-check permission before updating
+        // check permission before updating
         if (!Auth::user()->hasAnyRole(['author', 'admin'])) {
             abort(403, 'You do not have permission to edit posts.');
         }
@@ -64,11 +65,12 @@ class EditPost extends Component
             $data['featured_image'] = $this->featured_image->store('posts', 'public');
         }
 
+        //update data
         $this->post->update($data);
 
         session()->flash('message', 'Post updated successfully!');
 
-        // Redirect to the updated post
+        // redirect to the updated post
         return redirect()->route('posts.show', $this->post->slug);
     }
 

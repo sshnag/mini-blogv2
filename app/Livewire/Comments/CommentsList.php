@@ -15,8 +15,10 @@ class CommentsList extends Component
     public $editingCommentId = null;
     public $editContent = '';
 
+    //lsitener for comment added event
     protected $listeners = ['commentAdded' => '$refresh'];
 
+    //validationn
     protected $rules = [
         'editContent' => 'required|min:3|max:1000',
     ];
@@ -26,10 +28,13 @@ class CommentsList extends Component
         $this->post = $post;
     }
 
+    //opening edit comment
     public function openEditComment($commentId)
     {
+        //finding comment id
         $comment = Comment::findOrFail($commentId);
 
+        //authorization check
         if (Gate::denies('update', $comment)) {
             abort(403);
         }
@@ -38,12 +43,14 @@ class CommentsList extends Component
         $this->editContent = $comment->content;
     }
 
+    //for cancel edit comment button
     public function cancelEdit()
     {
         $this->editingCommentId = null;
         $this->editContent = '';
     }
 
+    //update comment after editing
     public function updateComment()
     {
         $this->validate();
@@ -54,6 +61,7 @@ class CommentsList extends Component
             abort(403);
         }
 
+        //update comment
         $comment->update(['content' => $this->editContent]);
 
         session()->flash('success', 'Comment updated successfully.');
@@ -61,9 +69,10 @@ class CommentsList extends Component
         $this->editingCommentId = null;
         $this->editContent = '';
 
-        $this->emit('$refresh');
+        $this->dispatch('$refresh');
     }
 
+    //for comment deletion
     public function deleteComment($commentId)
     {
         $comment = Comment::findOrFail($commentId);

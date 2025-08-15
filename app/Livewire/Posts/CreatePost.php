@@ -16,6 +16,7 @@ class CreatePost extends Component
     public $content;
     public $featured_image;
 
+    //validationn
     protected $rules = [
         'title' => 'required|string|max:255',
         'content' => 'required|string|min:10',
@@ -33,7 +34,7 @@ class CreatePost extends Component
     /** Save new post */
     public function create()
     {
-        // Double-check permission before creating
+        // check permission before creating
         if (!Auth::user()->hasAnyRole(['author', 'admin'])) {
             abort(403, 'You do not have permission to create posts.');
         }
@@ -49,10 +50,12 @@ class CreatePost extends Component
             'slug' => Str::slug($this->title) . '-' . uniqid(),
         ];
 
+        //image data storing
         if ($this->featured_image) {
             $data['featured_image'] = $this->featured_image->store('posts', 'public');
         }
 
+        //insert data
         $post = Post::create($data);
 
         $this->reset(['title', 'content', 'featured_image']);

@@ -10,7 +10,7 @@ use Livewire\Attributes\Layout;
 #[Layout('layouts.app')]
 class CommentsManagement extends Component
 {
-    use WithPagination;
+    use WithPagination;  //for pagination
 
     public $limit = null;
 
@@ -22,6 +22,7 @@ class CommentsManagement extends Component
     public function approveComment($commentId)
     {
         try {
+            //retriving only approved comments
             $comment = Comment::findOrFail($commentId);
             $comment->update(['is_approved' => true]);
             session()->flash('message', 'Comment approved successfully.');
@@ -44,6 +45,7 @@ class CommentsManagement extends Component
     public function deleteComment($commentId)
     {
         try {
+            //finding commentid and delete
             $comment = Comment::findOrFail($commentId);
             $comment->delete();
             session()->flash('message', 'Comment deleted successfully.');
@@ -60,7 +62,7 @@ class CommentsManagement extends Component
     public function render()
     {
         $query = Comment::with(['user', 'post'])->latest();
-        
+
         if ($this->limit) {
             $comments = $query->take($this->limit)->get();
         } else {

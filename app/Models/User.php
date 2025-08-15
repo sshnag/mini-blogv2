@@ -43,14 +43,17 @@ class User extends Authenticatable
     'email_verified_at' => 'datetime',
     'password' => 'hashed',
 ];
-
+    //Post model relation
     public function  posts()  {
         return $this->hasMany(Post::class);
     }
+    //comment model relation
     public function  comments()
       {
         return $this->hasMany(Comment::class);
     }
+
+    //getting postid which is liked
     public function likedPosts(){
         return $this->belongsToMany(Post::class, 'likes', 'user_id', 'post_id');
     }

@@ -11,6 +11,8 @@ use Livewire\Attributes\Layout;
 class PostsManagement extends Component
 {
     use WithPagination;
+
+    //for post stauts changing 'publish, draft'
     public function toggleStatus(Post $post) {
         $post->update([
             'status'=>$post->status =='published' ?'draft' : 'published',
@@ -18,11 +20,13 @@ class PostsManagement extends Component
         ]);
     }
 
+    //for post deletion
     public function deletePost(Post $post){
         $post->delete();
     }
     public function render()
 {
+    //post andu user model relationshop and pagination
         $posts = Post::with('user')
             ->latest()
             ->paginate(10);

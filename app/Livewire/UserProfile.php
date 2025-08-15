@@ -23,6 +23,7 @@ class UserProfile extends Component
 
     public function rules()
     {
+        //validation
         return [
             'name' => 'required|string|max:255',
             'email' => 'required|email|max:255|unique:users,email,' . Auth::id(),
@@ -42,7 +43,7 @@ class UserProfile extends Component
             ->select('posts.id', 'posts.title', 'posts.slug', 'posts.created_at')
             ->latest()
             ->get();
-            
+
         $this->name = $this->user->name;
         $this->email = $this->user->email;
         $this->existingAvatar = $this->user->avatar;
@@ -54,6 +55,7 @@ class UserProfile extends Component
 
         $user = Auth::user();
 
+        //storing user's profile image
         if ($this->avatar) {
             $avatarPath = $this->avatar->store('avatars', 'public');
             $user->avatar = $avatarPath;
@@ -66,7 +68,7 @@ class UserProfile extends Component
 
         session()->flash('success', 'Profile updated successfully.');
 
-        //  refresh related data:
+        //refresh related data
         $this->comments = $user->comments()->with('post')->latest()->get();
         $this->likedPosts = $user->likedPosts()
             ->where('status', 'published')

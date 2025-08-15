@@ -19,12 +19,15 @@ class  LikePost extends Component{
         $this->likesCount=$post->likes()->count();
     }
 
+    //for like button
     public function toggleLike()
 {
+    //check if the user is logged in
     if (!Auth::check()) {
         return redirect()->route('login');
     }
 
+    //increasing and decreasing the no of like
     if ($this->isLiked) {
         $this->post->likes()->where('user_id', Auth::id())->delete();
         $this->isLiked = false;
@@ -37,8 +40,6 @@ class  LikePost extends Component{
         $this->likesCount++;
     }
 }
-
-
          public function render()
     {
         return view('livewire.posts.like-post');
